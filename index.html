@@ -3,456 +3,1955 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Healthy Herd - Pig Health Monitoring Patch</title>
+    <title>Healthy Herd - Complete Product Demo</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            margin: 0;
-            padding: 20px;
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #FF6600 0%, #FF8533 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0D0E1A 0%, #1A1B2E 50%, #16213E 100%);
             color: white;
-            padding: 40px;
+            overflow-x: hidden;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        .demo-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .demo-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(13, 14, 26, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 20px 40px;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .demo-title {
+            font-size: 1.375rem;
+            color: #FF6B35;
+            font-weight: 600;
+            letter-spacing: -0.025em;
+        }
+
+        .demo-controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .demo-btn {
+            padding: 10px 20px;
+            background: rgba(255, 107, 53, 0.1);
+            border: 1px solid rgba(255, 107, 53, 0.2);
+            border-radius: 12px;
+            color: #FF6B35;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+            backdrop-filter: blur(10px);
+        }
+
+        .demo-btn:hover {
+            background: rgba(255, 107, 53, 0.15);
+            border-color: rgba(255, 107, 53, 0.4);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.2);
+        }
+
+        .demo-btn.active {
+            background: linear-gradient(135deg, #FF6B35, #F7931E);
+            border-color: #FF6B35;
+            color: white;
+            box-shadow: 0 4px 16px rgba(255, 107, 53, 0.3);
+        }
+
+        .demo-section {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            padding: 100px 60px 80px;
+            overflow-y: auto;
+        }
+
+        .demo-section.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .demo-section.prev {
+            transform: translateX(-100%);
+        }
+
+        /* Enhanced Typography */
+        .section-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #FF6B35 0%, #00F5A0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+        }
+
+        .spec-title {
+            font-size: 2.75rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #FF6B35, #00F5A0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+            letter-spacing: -0.01em;
+        }
+
+        /* Enhanced Cards and Glass Effect */
+        .product-specs,
+        .step-card,
+        .tech-feature,
+        .info-card,
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .product-specs {
+            padding: 48px;
+        }
+
+        .step-card {
+            padding: 32px;
             text-align: center;
+            min-width: 240px;
+            transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
         }
 
-        .header h1 {
-            margin: 0;
-            font-size: 2.5em;
-            font-weight: 300;
+        .step-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 
+                0 16px 48px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
         }
 
-        .header p {
-            margin: 10px 0 0 0;
-            font-size: 1.2em;
-            opacity: 0.9;
+        .tech-feature {
+            padding: 36px;
+            border-left: 4px solid #00F5A0;
+            transform: translateX(0);
+            opacity: 1;
         }
 
-        .content {
+        /* Enhanced 3D Elements */
+        .main-patch {
+            position: relative;
+            width: 320px;
+            height: 213px;
+            background: linear-gradient(145deg, #FF6B35, #E55A2B);
+            border-radius: 42px;
+            box-shadow: 
+                0 24px 48px rgba(229, 90, 43, 0.4),
+                inset 0 4px 12px rgba(255, 255, 255, 0.15),
+                inset 0 -4px 8px rgba(0, 0, 0, 0.1);
+            transform: perspective(1200px) rotateX(-15deg) rotateY(12deg);
+            animation: heroFloat 4s ease-in-out infinite;
+            cursor: pointer;
+            transition: all 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
+        }
+
+        /* Enhanced Navigation Dots */
+        .nav-dots {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 16px;
+            z-index: 1000;
+            background: rgba(13, 14, 26, 0.8);
+            backdrop-filter: blur(20px);
+            padding: 12px 20px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
+            position: relative;
+        }
+
+        .nav-dot.active {
+            background: #FF6B35;
+            transform: scale(1.3);
+            box-shadow: 0 0 12px rgba(255, 107, 53, 0.5);
+        }
+
+        .nav-dot:hover:not(.active) {
+            background: rgba(255, 107, 53, 0.6);
+            transform: scale(1.1);
+        }
+
+        /* Enhanced Spec Items */
+        .spec-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            border-left: 3px solid #FF6B35;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .spec-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+            transform: translateX(4px);
+        }
+
+        /* Enhanced Step Numbers */
+        .step-number {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #FF6B35, #E55A2B);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-weight: 700;
+            font-size: 1.25rem;
+            box-shadow: 
+                0 8px 16px rgba(255, 107, 53, 0.3),
+                inset 0 2px 4px rgba(255, 255, 255, 0.2);
+        }
+
+        /* Product Overview Section - Enhanced */
+        .product-overview {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            padding: 40px;
+            gap: 80px;
+            align-items: center;
+            max-width: 1600px;
+            width: 100%;
         }
 
-        .product-view {
+        .product-3d {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 30px;
-        }
-
-        .patch-3d {
+            gap: 40px;
             position: relative;
-            width: 240px;
-            height: 160px;
-            background: linear-gradient(145deg, #FF6600, #e55a00);
-            border-radius: 32px;
+        }
+
+        .product-3d::before {
+            content: '';
+            position: absolute;
+            top: -40px;
+            left: -40px;
+            right: -40px;
+            bottom: -40px;
+            background: radial-gradient(circle at center, rgba(255, 107, 53, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: -1;
+        }
+
+        .main-patch {
+            position: relative;
+            width: 360px;
+            height: 240px;
+            background: linear-gradient(145deg, #FF6B35, #E55A2B);
+            border-radius: 48px;
             box-shadow: 
-                0 8px 16px rgba(229, 90, 0, 0.3),
-                inset 0 2px 4px rgba(255, 255, 255, 0.2);
-            transform: perspective(1000px) rotateX(-15deg) rotateY(10deg);
-            animation: float 3s ease-in-out infinite;
+                0 32px 64px rgba(229, 90, 43, 0.4),
+                0 16px 32px rgba(0, 0, 0, 0.2),
+                inset 0 4px 16px rgba(255, 255, 255, 0.15),
+                inset 0 -4px 12px rgba(0, 0, 0, 0.1);
+            transform: perspective(1400px) rotateX(-12deg) rotateY(8deg);
+            animation: heroFloat 5s ease-in-out infinite;
+            cursor: pointer;
+            transition: all 0.8s cubic-bezier(0.4, 0.0, 0.2, 1);
+            overflow: hidden;
         }
 
-        @keyframes float {
-            0%, 100% { transform: perspective(1000px) rotateX(-15deg) rotateY(10deg) translateY(0px); }
-            50% { transform: perspective(1000px) rotateX(-15deg) rotateY(10deg) translateY(-10px); }
+        .main-patch::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 50%);
+            border-radius: 48px;
+            pointer-events: none;
         }
 
-        .sensor-window {
+        .main-patch:hover {
+            transform: perspective(1400px) rotateX(-8deg) rotateY(5deg) translateY(-8px);
+            box-shadow: 
+                0 48px 96px rgba(229, 90, 43, 0.5),
+                0 24px 48px rgba(0, 0, 0, 0.3),
+                inset 0 4px 16px rgba(255, 255, 255, 0.2);
+        }
+
+        @keyframes heroFloat {
+            0%, 100% { 
+                transform: perspective(1400px) rotateX(-12deg) rotateY(8deg) translateY(0px);
+            }
+            50% { 
+                transform: perspective(1400px) rotateX(-12deg) rotateY(8deg) translateY(-12px);
+            }
+        }
+
+        .sensor-window-main {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 60px;
-            height: 60px;
-            background: radial-gradient(circle, #333333 0%, #111111 100%);
+            width: 85px;
+            height: 85px;
+            background: radial-gradient(circle, #2A2A2A 0%, #0A0A0A 100%);
             border-radius: 50%;
-            box-shadow: inset 0 4px 8px rgba(0,0,0,0.5);
+            box-shadow: 
+                inset 0 8px 20px rgba(0,0,0,0.8),
+                0 0 0 2px rgba(255, 107, 53, 0.3),
+                0 0 20px rgba(255, 107, 53, 0.2);
+            overflow: hidden;
         }
 
         .sensor-dot {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 8px;
-            height: 8px;
-            background: #00ff88;
+            width: 5px;
+            height: 5px;
+            background: #00F5A0;
             border-radius: 50%;
-            box-shadow: 0 0 10px #00ff88;
-            animation: pulse 2s infinite;
+            animation: sensorPulse 2.5s infinite;
+            box-shadow: 0 0 8px rgba(0, 245, 160, 0.8);
         }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-            50% { opacity: 0.7; transform: translate(-50%, -50%) scale(1.2); }
+        @keyframes sensorPulse {
+            0%, 100% { 
+                opacity: 0.4; 
+                transform: scale(1);
+                box-shadow: 0 0 8px rgba(0, 245, 160, 0.5);
+            }
+            50% { 
+                opacity: 1; 
+                transform: scale(1.8);
+                box-shadow: 0 0 16px rgba(0, 245, 160, 1);
+            }
         }
 
-        .led-indicator {
+        .led-indicator-main {
             position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 12px;
-            height: 12px;
-            background: #00ff00;
+            top: 30px;
+            right: 30px;
+            width: 18px;
+            height: 18px;
+            background: #00F5A0;
             border-radius: 50%;
-            box-shadow: 0 0 8px #00ff00;
-            animation: blink 1.5s infinite;
+            box-shadow: 
+                0 0 20px currentColor,
+                inset 0 2px 4px rgba(255, 255, 255, 0.3);
+            animation: ledCycle 4s infinite;
         }
 
-        @keyframes blink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0.3; }
+        @keyframes ledCycle {
+            0%, 20% { background: #00F5A0; box-shadow: 0 0 20px #00F5A0, inset 0 2px 4px rgba(255, 255, 255, 0.3); }
+            21%, 40% { background: #00A8FF; box-shadow: 0 0 20px #00A8FF, inset 0 2px 4px rgba(255, 255, 255, 0.3); }
+            41%, 60% { background: #FF3B30; box-shadow: 0 0 20px #FF3B30, inset 0 2px 4px rgba(255, 255, 255, 0.3); }
+            61%, 80% { background: #FF9500; box-shadow: 0 0 20px #FF9500, inset 0 2px 4px rgba(255, 255, 255, 0.3); }
+            81%, 100% { background: #00F5A0; box-shadow: 0 0 20px #00F5A0, inset 0 2px 4px rgba(255, 255, 255, 0.3); }
         }
 
-        .qr-code {
+        .product-info {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .product-info h3 {
+            color: #00F5A0;
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            letter-spacing: -0.01em;
+        }
+
+        .product-info p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.975rem;
+            font-weight: 500;
+        }
+
+        .product-specs {
+            padding: 56px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-specs::before {
+            content: '';
             position: absolute;
-            bottom: 15px;
-            left: 15px;
-            width: 24px;
-            height: 24px;
-            background: #333;
-            border-radius: 2px;
-            opacity: 0.7;
-        }
-
-        .logo-emboss {
-            position: absolute;
-            bottom: 15px;
-            right: 15px;
-            font-size: 10px;
-            color: rgba(255,255,255,0.3);
-            font-weight: bold;
-        }
-
-        .side-clips {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 8px;
-            height: 30px;
-            background: #666;
-            border-radius: 4px;
-        }
-
-        .side-clips.left { left: -4px; }
-        .side-clips.right { right: -4px; }
-
-        .specifications {
-            background: #f8f9fa;
-            padding: 30px;
-            border-radius: 15px;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.05) 0%, rgba(0, 245, 160, 0.03) 100%);
+            pointer-events: none;
         }
 
         .spec-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-top: 20px;
+            gap: 24px;
+            margin-top: 40px;
         }
 
         .spec-item {
             display: flex;
             justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid #eee;
-        }
-
-        .spec-item:last-child {
-            border-bottom: none;
-        }
-
-        .spec-label {
-            font-weight: 600;
-            color: #333;
-        }
-
-        .spec-value {
-            color: #666;
-        }
-
-        .features {
-            margin-top: 30px;
-        }
-
-        .feature-list {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .feature-item {
-            display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 10px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 24px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+            border-left: 4px solid #FF6B35;
+            font-weight: 500;
+            transition: all 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .spec-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 107, 53, 0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .spec-item:hover::before {
+            left: 100%;
+        }
+
+        .spec-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateX(8px);
+            border-left-color: #00F5A0;
+        }
+
+        .spec-item span:first-child {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.975rem;
+        }
+
+        .spec-item span:last-child {
+            color: #00F5A0;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .key-advantages {
+            margin-top: 48px;
+            text-align: center;
+        }
+
+        .key-advantages h3 {
+            color: #FF6B35;
+            font-size: 1.375rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            letter-spacing: -0.01em;
+        }
+
+        .advantages-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .advantage-card {
+            background: rgba(0, 245, 160, 0.06);
+            padding: 24px;
+            border-radius: 16px;
+            border: 1px solid rgba(0, 245, 160, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .advantage-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #00F5A0, #FF6B35);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .advantage-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .advantage-card:hover {
+            background: rgba(0, 245, 160, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .advantage-card strong {
+            color: #00F5A0;
+            font-size: 1rem;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .advantage-card small {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.875rem;
+            line-height: 1.4;
+        }
+
+        .sensor-visual {
+            position: relative;
+            height: 500px;
+        }
+
+        .tech-patch {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 250px;
+            height: 167px;
+            background: linear-gradient(145deg, #FF6600, #e55a00);
+            border-radius: 33px;
+            box-shadow: 0 15px 30px rgba(229, 90, 0, 0.4);
+        }
+
+        .sensor-detail {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, rgba(0,255,136,0.2), rgba(0,255,136,0.8));
+            border-radius: 50%;
+            animation: sensorWave 2s ease-in-out infinite;
+        }
+
+        .temp-sensor {
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: radial-gradient(circle, rgba(255,102,0,0.2), rgba(255,102,0,0.8));
+        }
+
+        .optical-sensor {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        @keyframes sensorWave {
+            0%, 100% { 
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.8;
+            }
+            50% { 
+                transform: translate(-50%, -50%) scale(1.3);
+                opacity: 0.4;
+            }
+        }
+
+        .data-stream {
+            position: absolute;
+            width: 2px;
+            height: 80px;
+            background: linear-gradient(to top, transparent, #00ff88);
+            left: 50%;
+            top: -80px;
+            animation: dataFlow 1.5s linear infinite;
+        }
+
+        @keyframes dataFlow {
+            0% { 
+                transform: translateX(-50%) translateY(80px);
+                opacity: 0;
+            }
+            50% { 
+                opacity: 1;
+            }
+            100% { 
+                transform: translateX(-50%) translateY(-80px);
+                opacity: 0;
+            }
+        }
+
+        .tech-details {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .tech-feature {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 15px;
+            padding: 30px;
+            border-left: 4px solid #00ff88;
+            transform: translateX(50px);
+            opacity: 0;
+            animation: slideInRight 0.8s ease-out forwards;
+        }
+
+        .tech-feature:nth-child(2) { animation-delay: 0.2s; }
+        .tech-feature:nth-child(3) { animation-delay: 0.4s; }
+        .tech-feature:nth-child(4) { animation-delay: 0.6s; }
+
+        @keyframes slideInRight {
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
 
         .feature-icon {
-            width: 20px;
-            height: 20px;
+            width: 50px;
+            height: 50px;
             background: #FF6600;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        /* Enhanced Packaging Section */
+        .packaging-demo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 80px;
+            max-width: 1600px;
+            width: 100%;
+        }
+
+        .packaging-showcase {
+            display: flex;
+            gap: 120px;
+            align-items: flex-start;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .packaging-option {
+            text-align: center;
+            position: relative;
+        }
+
+        .package-individual {
+            position: relative;
+            perspective: 1400px;
+            cursor: pointer;
+        }
+
+        .clamshell {
+            width: 260px;
+            height: 320px;
+            background: linear-gradient(145deg, 
+                rgba(255,255,255,0.98) 0%, 
+                rgba(248,248,248,0.95) 50%,
+                rgba(240,240,240,0.92) 100%);
+            border-radius: 24px;
+            transform-style: preserve-3d;
+            box-shadow: 
+                0 32px 64px rgba(0,0,0,0.15),
+                0 16px 32px rgba(0,0,0,0.1),
+                inset 0 2px 4px rgba(255,255,255,0.9),
+                inset 0 -1px 2px rgba(0,0,0,0.05);
+            border: 2px solid rgba(255,255,255,0.9);
+            position: relative;
+            overflow: hidden;
+            animation: packageFloat 7s ease-in-out infinite;
+            transition: all 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
+        }
+
+        .clamshell:hover {
+            transform: rotateY(-5deg) rotateX(2deg) translateY(-8px) scale(1.02);
+            box-shadow: 
+                0 48px 96px rgba(0,0,0,0.2),
+                0 24px 48px rgba(0,0,0,0.15),
+                inset 0 2px 4px rgba(255,255,255,0.95);
+        }
+
+        @keyframes packageFloat {
+            0%, 100% { 
+                transform: rotateY(-8deg) rotateX(3deg) translateY(0px);
+            }
+            33% { 
+                transform: rotateY(8deg) rotateX(-3deg) translateY(-12px);
+            }
+            66% { 
+                transform: rotateY(0deg) rotateX(0deg) translateY(-6px);
+            }
+        }
+
+        .package-patch {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 140px;
+            height: 93px;
+            background: linear-gradient(145deg, #FF6B35, #E55A2B);
+            border-radius: 18px;
+            box-shadow: 
+                0 12px 32px rgba(229, 90, 43, 0.4),
+                inset 0 3px 6px rgba(255, 255, 255, 0.3),
+                inset 0 -2px 4px rgba(0, 0, 0, 0.1);
+            animation: packagePatchGlow 4s ease-in-out infinite;
+        }
+
+        @keyframes packagePatchGlow {
+            0%, 100% { 
+                box-shadow: 
+                    0 12px 32px rgba(229, 90, 43, 0.4),
+                    inset 0 3px 6px rgba(255, 255, 255, 0.3),
+                    inset 0 -2px 4px rgba(0, 0, 0, 0.1);
+            }
+            50% { 
+                box-shadow: 
+                    0 16px 40px rgba(229, 90, 43, 0.6),
+                    inset 0 3px 6px rgba(255, 255, 255, 0.4),
+                    inset 0 -2px 4px rgba(0, 0, 0, 0.1);
+            }
+        }
+
+        .package-label {
+            position: absolute;
+            bottom: 24px;
+            left: 16px;
+            right: 16px;
+            background: linear-gradient(135deg, #FF6B35, #E55A2B);
+            color: white;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            text-align: center;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            box-shadow: 
+                0 4px 12px rgba(229, 90, 43, 0.3),
+                inset 0 1px 2px rgba(255, 255, 255, 0.2);
+        }
+
+        .package-barcode {
+            position: absolute;
+            top: 24px;
+            left: 24px;
+            right: 24px;
+            height: 32px;
+            background: repeating-linear-gradient(90deg, 
+                #000 0px, #000 2px, 
+                #fff 2px, #fff 4px);
+            opacity: 0.7;
+            border-radius: 4px;
+        }
+
+        .activation-tab {
+            position: absolute;
+            top: -6px;
+            right: 24px;
+            width: 48px;
+            height: 28px;
+            background: linear-gradient(135deg, #FF3B30, #D70015);
+            border-radius: 0 0 12px 12px;
+            color: white;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            animation: tabPulse 3s infinite;
+            box-shadow: 
+                0 4px 12px rgba(215, 0, 21, 0.3),
+                inset 0 1px 2px rgba(255, 255, 255, 0.2);
+        }
+
+        @keyframes tabPulse {
+            0%, 100% { transform: translateY(0); opacity: 0.9; }
+            50% { transform: translateY(-2px); opacity: 1; }
+        }
+
+        .bulk-package {
+            position: relative;
+            width: 400px;
+            height: 250px;
+            background: linear-gradient(145deg, 
+                #2E2E2E 0%, 
+                #424242 50%, 
+                #1C1C1C 100%);
+            border-radius: 20px;
+            box-shadow: 
+                0 32px 64px rgba(0,0,0,0.4),
+                0 16px 32px rgba(0,0,0,0.2),
+                inset 0 2px 4px rgba(255,255,255,0.1),
+                inset 0 -2px 8px rgba(0,0,0,0.2);
+            cursor: pointer;
+            animation: bulkFloat 6s ease-in-out infinite;
+            transition: all 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
+        }
+
+        .bulk-package:hover {
+            transform: translateY(-6px) rotateX(-1deg) scale(1.02);
+            box-shadow: 
+                0 48px 96px rgba(0,0,0,0.5),
+                0 24px 48px rgba(0,0,0,0.3),
+                inset 0 2px 4px rgba(255,255,255,0.15);
+        }
+
+        @keyframes bulkFloat {
+            0%, 100% { transform: translateY(0px) rotateX(0deg); }
+            50% { transform: translateY(-12px) rotateX(-1deg); }
+        }
+
+        .bulk-lid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 48px;
+            background: linear-gradient(145deg, #FF6B35, #E55A2B);
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 15px;
+            letter-spacing: 0.5px;
+            box-shadow: 
+                inset 0 2px 4px rgba(255,255,255,0.3),
+                0 2px 8px rgba(229, 90, 43, 0.2);
+        }
+
+        .bulk-handle {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 20px;
+            background: linear-gradient(145deg, #424242, #2E2E2E);
+            border-radius: 10px;
+            box-shadow: 
+                0 4px 8px rgba(0,0,0,0.3),
+                inset 0 1px 2px rgba(255,255,255,0.1);
+        }
+
+        .foam-insert {
+            position: absolute;
+            top: 54px;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+            background: linear-gradient(145deg, #FAFAFA, #E8E8E8);
+            border-radius: 12px;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 12px;
+            padding: 20px;
+            box-shadow: 
+                inset 0 3px 12px rgba(0,0,0,0.1),
+                inset 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .mini-patch {
+            background: linear-gradient(145deg, #FF6B35, #E55A2B);
+            border-radius: 6px;
+            box-shadow: 
+                0 3px 8px rgba(229, 90, 43, 0.3),
+                inset 0 1px 2px rgba(255, 255, 255, 0.2);
+            animation: miniPulse 4s infinite;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .mini-patch::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 8px;
+            background: rgba(0, 245, 160, 0.9);
+            border-radius: 50%;
+            animation: miniSensorPulse 2.5s infinite;
+            box-shadow: 0 0 6px rgba(0, 245, 160, 0.8);
+        }
+
+        @keyframes miniSensorPulse {
+            0%, 100% { 
+                opacity: 0.4; 
+                transform: translate(-50%, -50%) scale(1);
+                box-shadow: 0 0 6px rgba(0, 245, 160, 0.5);
+            }
+            50% { 
+                opacity: 1; 
+                transform: translate(-50%, -50%) scale(1.3);
+                box-shadow: 0 0 12px rgba(0, 245, 160, 1);
+            }
+        }
+
+        @keyframes miniPulse {
+            0%, 100% { 
+                opacity: 0.9; 
+                transform: scale(1);
+                box-shadow: 0 3px 8px rgba(229, 90, 43, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.2);
+            }
+            50% { 
+                opacity: 1; 
+                transform: scale(1.05);
+                box-shadow: 0 5px 15px rgba(229, 90, 43, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.3);
+            }
+        }
+
+        .packaging-title {
+            color: #FF6B35;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 48px 0 20px;
+            letter-spacing: -0.01em;
+        }
+
+        .packaging-features {
+            color: rgba(255,255,255,0.75);
+            margin-top: 20px;
+            line-height: 1.8;
+            font-size: 0.975rem;
+        }
+
+        .packaging-features div {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .packaging-features div::before {
+            content: '✓';
+            color: #00F5A0;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .package-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 48px;
+            margin-top: 80px;
+            max-width: 1200px;
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(24px);
+            border-radius: 24px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #FF6B35, #00F5A0);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .info-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .info-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 
+                0 24px 48px rgba(255, 107, 53, 0.2),
+                0 12px 24px rgba(0, 0, 0, 0.15);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .info-icon {
+            width: 72px;
+            height: 72px;
+            background: linear-gradient(135deg, #FF6B35, #00F5A0);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 2rem;
+            animation: iconFloat 4s ease-in-out infinite;
+            box-shadow: 
+                0 8px 24px rgba(255, 107, 53, 0.3),
+                inset 0 2px 4px rgba(255, 255, 255, 0.2);
+        }
+
+        @keyframes iconFloat {
+            0%, 100% { 
+                transform: translateY(0px) rotate(0deg);
+                box-shadow: 0 8px 24px rgba(255, 107, 53, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.2);
+            }
+            50% { 
+                transform: translateY(-6px) rotate(3deg);
+                box-shadow: 0 12px 32px rgba(255, 107, 53, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.25);
+            }
+        }
+
+        .info-card:nth-child(2) .info-icon { animation-delay: 0.8s; }
+        .info-card:nth-child(3) .info-icon { animation-delay: 1.6s; }
+
+        .info-card h4 {
+            color: #00F5A0;
+            margin-bottom: 16px;
+            font-size: 1.25rem;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+
+        .info-card p {
+            color: rgba(255,255,255,0.8);
+            font-size: 0.975rem;
+            line-height: 1.6;
+        }
+
+        /* Software Interface Section */
+        .software-demo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 60px;
+            max-width: 1400px;
+            width: 100%;
+        }
+
+        .software-showcase {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: flex-start;
+            width: 100%;
+        }
+
+        .mobile-mockup {
+            position: relative;
+            width: 300px;
+            height: 600px;
+            background: linear-gradient(145deg, #1a1a1a, #2d2d2d);
+            border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+            padding: 20px;
+            margin: 0 auto;
+            animation: phoneFloat 4s ease-in-out infinite;
+        }
+
+        @keyframes phoneFloat {
+            0%, 100% { transform: translateY(0px) rotateY(0deg); }
+            50% { transform: translateY(-10px) rotateY(5deg); }
+        }
+
+        .mobile-screen {
+            width: 100%;
+            height: 100%;
+            background: #000;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .mobile-header {
+            background: linear-gradient(135deg, #FF6600, #e55a00);
+            padding: 30px 20px 20px;
+            color: white;
+            position: relative;
+        }
+
+        .mobile-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .mobile-subtitle {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .pig-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            padding: 20px;
+            background: #1a1a1a;
+            height: calc(100% - 100px);
+            overflow-y: auto;
+        }
+
+        .pig-card {
+            background: #2a2a2a;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            cursor: pointer;
+        }
+
+        .pig-card.healthy {
+            border-color: #4caf50;
+        }
+
+        .pig-card.warning {
+            border-color: #ff9800;
+        }
+
+        .pig-card.alert {
+            border-color: #f44336;
+        }
+
+        .pig-status {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.8em;
+        }
+
+        .pig-status.healthy { background: #4caf50; }
+        .pig-status.warning { background: #ff9800; }
+        .pig-status.alert { background: #f44336; }
+
+        .pig-id {
+            color: white;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .pig-temp {
+            color: #ccc;
+            font-size: 0.8em;
+        }
+
+        .web-mockup {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            overflow: hidden;
+            animation: webFloat 5s ease-in-out infinite;
+        }
+
+        @keyframes webFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .web-header {
+            background: linear-gradient(135deg, #FF6600, #e55a00);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .web-title {
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+
+        .web-nav {
+            display: flex;
+            gap: 20px;
+        }
+
+        .web-nav-item {
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .web-nav-item.active {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .web-content {
+            padding: 30px;
+            background: #f8f9fa;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .chart-title {
+            color: #333;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .chart-area {
+            height: 200px;
+            background: linear-gradient(45deg, 
+                transparent 30%, 
+                rgba(76, 175, 80, 0.1) 50%, 
+                transparent 70%);
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-line {
+            position: absolute;
+            bottom: 20%;
+            left: 10%;
+            width: 80%;
+            height: 2px;
+            background: #4caf50;
+            animation: chartDraw 3s ease-out infinite;
+        }
+
+        @keyframes chartDraw {
+            0% { width: 0%; opacity: 0; }
+            50% { opacity: 1; }
+            100% { width: 80%; }
+        }
+
+        .stats-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .stat-value.healthy { color: #4caf50; }
+        .stat-value.warning { color: #ff9800; }
+        .stat-value.alert { color: #f44336; }
+
+        .alerts-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .alert-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border-left: 4px solid;
+        }
+
+        .alert-item.warning { border-left-color: #ff9800; }
+        .alert-item.alert { border-left-color: #f44336; }
+
+        .alert-icon {
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 12px;
-            font-weight: bold;
+            font-size: 0.8em;
         }
 
-        .attachment-demo {
-            margin-top: 30px;
-            padding: 20px;
-            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-            border-radius: 15px;
+        .alert-icon.warning { background: #ff9800; }
+        .alert-icon.alert { background: #f44336; }
+
+        .software-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
             text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease;
         }
 
-        .pig-silhouette {
-            width: 200px;
-            height: 120px;
-            background: #8d6e63;
-            border-radius: 60px 40px 40px 60px;
-            position: relative;
-            margin: 20px auto;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        .feature-card:hover {
+            transform: translateY(-5px);
         }
 
-        .patch-on-pig {
-            position: absolute;
-            top: 20px;
-            right: 30px;
-            width: 30px;
-            height: 20px;
-            background: #FF6600;
-            border-radius: 4px;
-            transform: rotate(-10deg);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .status-indicators {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .status-item {
+        .feature-card-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #FF6600, #00ff88);
+            border-radius: 50%;
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 8px 12px;
-            background: white;
-            border-radius: 20px;
-            font-size: 14px;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 1.5em;
         }
 
-        .status-led {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-        }
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .product-overview,
+            .sensor-tech {
+                grid-template-columns: 1fr;
+                gap: 40px;
+                text-align: center;
+            }
 
-        .status-led.green { background: #4caf50; }
-        .status-led.blue { background: #2196f3; }
-        .status-led.red { background: #f44336; }
-        .status-led.orange { background: #ff9800; }
+            .main-patch {
+                width: 250px;
+                height: 167px;
+            }
 
-        h2 {
-            color: #333;
-            font-size: 1.8em;
-            margin-bottom: 15px;
-            font-weight: 300;
-        }
+            .attachment-scene {
+                width: 600px;
+                height: 300px;
+            }
 
-        h3 {
-            color: #FF6600;
-            font-size: 1.3em;
-            margin-bottom: 10px;
-            font-weight: 600;
+            .pig-body {
+                width: 450px;
+                height: 225px;
+            }
+
+            .attachment-steps {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .packaging-demo {
+                flex-direction: column;
+            }
         }
 
         @media (max-width: 768px) {
-            .content {
+            .demo-header {
+                padding: 10px 20px;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .demo-controls {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .demo-section {
+                padding: 100px 20px 40px;
+            }
+
+            .section-title {
+                font-size: 2em;
+            }
+
+            .spec-title {
+                font-size: 1.8em;
+            }
+
+            .spec-grid {
                 grid-template-columns: 1fr;
-                gap: 30px;
-                padding: 20px;
             }
-            
-            .patch-3d {
-                width: 200px;
-                height: 130px;
-            }
-            
-            .spec-grid, .feature-list {
-                grid-template-columns: 1fr;
-            }
+        }
+
+        /* Navigation Indicators */
+        .nav-dots {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .nav-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav-dot.active {
+            background: #FF6600;
+            transform: scale(1.2);
+        }
+
+        .nav-dot:hover {
+            background: rgba(255, 102, 0, 0.7);
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Healthy Herd</h1>
-            <p>Advanced Pig Health Monitoring System</p>
+    <div class="demo-container">
+        <div class="demo-header">
+            <div class="demo-title">Healthy Herd - Interactive Product Demo</div>
+            <div class="demo-controls">
+                <button class="demo-btn active" onclick="showSection(0)">Overview</button>
+                <button class="demo-btn" onclick="showSection(1)">Attachment</button>
+                <button class="demo-btn" onclick="showSection(2)">Technology</button>
+                <button class="demo-btn" onclick="showSection(3)">Packaging</button>
+                <button class="demo-btn" onclick="toggleFullscreen()">Fullscreen</button>
+            </div>
         </div>
 
-        <div class="content">
-            <div class="product-view">
-                <div class="patch-3d">
-                    <div class="sensor-window">
-                        <div class="sensor-dot"></div>
+        <!-- Section 1: Product Overview -->
+        <div class="demo-section active" data-section="0">
+            <div class="product-overview">
+                <div class="product-3d">
+                    <div class="main-patch" onclick="rotatePatch(this)">
+                        <div class="sensor-window-main">
+                            <div class="sensor-array">
+                                <div class="sensor-dot"></div>
+                                <div class="sensor-dot"></div>
+                                <div class="sensor-dot"></div>
+                                <div class="sensor-dot"></div>
+                                <div class="sensor-dot"></div>
+                                <div class="sensor-dot"></div>
+                            </div>
+                        </div>
+                        <div class="led-indicator-main"></div>
+                        <div style="position: absolute; bottom: 24px; left: 24px; width: 24px; height: 24px; background: rgba(0,0,0,0.4); border-radius: 4px; backdrop-filter: blur(4px);"></div>
+                        <div style="position: absolute; bottom: 24px; right: 24px; font-size: 14px; color: rgba(255,255,255,0.4); font-weight: 700; letter-spacing: 1px;">HH</div>
                     </div>
-                    <div class="led-indicator"></div>
-                    <div class="qr-code"></div>
-                    <div class="logo-emboss">HH</div>
-                    <div class="side-clips left"></div>
-                    <div class="side-clips right"></div>
-                </div>
-
-                <div class="attachment-demo">
-                    <h3>Behind-Neck Placement</h3>
-                    <div class="pig-silhouette">
-                        <div class="patch-on-pig"></div>
-                    </div>
-                    <p>Optimal position for continuous monitoring without interference</p>
-                </div>
-
-                <div class="status-indicators">
-                    <div class="status-item">
-                        <div class="status-led green"></div>
-                        <span>Normal</span>
-                    </div>
-                    <div class="status-item">
-                        <div class="status-led blue"></div>
-                        <span>Transmitting</span>
-                    </div>
-                    <div class="status-item">
-                        <div class="status-led red"></div>
-                        <span>Alert</span>
-                    </div>
-                    <div class="status-item">
-                        <div class="status-led orange"></div>
-                        <span>Pairing</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="specifications">
-                <h2>Technical Specifications</h2>
-                
-                <div class="spec-grid">
-                    <div class="spec-item">
-                        <span class="spec-label">Dimensions</span>
-                        <span class="spec-value">60×40×8mm</span>
-                    </div>
-                    <div class="spec-item">
-                        <span class="spec-label">Weight</span>
-                        <span class="spec-value">25-30g</span>
-                    </div>
-                    <div class="spec-item">
-                        <span class="spec-label">Material</span>
-                        <span class="spec-value">ABS + TPU</span>
-                    </div>
-                    <div class="spec-item">
-                        <span class="spec-label">Rating</span>
-                        <span class="spec-value">IP67</span>
-                    </div>
-                    <div class="spec-item">
-                        <span class="spec-label">Battery Life</span>
-                        <span class="spec-value">6+ months</span>
-                    </div>
-                    <div class="spec-item">
-                        <span class="spec-label">Connectivity</span>
-                        <span class="spec-value">LoRa/WiFi</span>
+                    <div class="product-info">
+                        <h3>Click to Rotate</h3>
+                        <p>60×40×8mm • 25-30g • IP67 Certified</p>
                     </div>
                 </div>
 
-                <div class="features">
-                    <h3>Key Features</h3>
-                    <div class="feature-list">
-                        <div class="feature-item">
-                            <div class="feature-icon">🌡️</div>
-                            <span>Continuous Temperature Monitoring</span>
+                <div class="product-specs">
+                    <h2 class="spec-title">Advanced Monitoring</h2>
+                    <p style="font-size: 1.125rem; margin-bottom: 40px; color: rgba(255,255,255,0.75); line-height: 1.6;">
+                        Real-time health monitoring system designed specifically for behind-neck placement on pigs, delivering veterinary-grade accuracy.
+                    </p>
+                    
+                    <div class="spec-grid">
+                        <div class="spec-item">
+                            <span>Temperature Accuracy</span>
+                            <span>±0.1°C</span>
                         </div>
-                        <div class="feature-item">
-                            <div class="feature-icon">❤️</div>
-                            <span>Heart Rate Detection</span>
+                        <div class="spec-item">
+                            <span>Heart Rate Range</span>
+                            <span>60-180 BPM</span>
                         </div>
-                        <div class="feature-item">
-                            <div class="feature-icon">📡</div>
-                            <span>Real-time Data Transmission</span>
+                        <div class="spec-item">
+                            <span>Battery Duration</span>
+                            <span>6+ Months</span>
                         </div>
-                        <div class="feature-item">
-                            <div class="feature-icon">🔒</div>
-                            <span>Secure Attachment System</span>
+                        <div class="spec-item">
+                            <span>Connectivity</span>
+                            <span>LoRa/WiFi</span>
                         </div>
-                        <div class="feature-item">
-                            <div class="feature-icon">💧</div>
-                            <span>Waterproof Design</span>
+                        <div class="spec-item">
+                            <span>Operating Range</span>
+                            <span>-20°C to 60°C</span>
                         </div>
-                        <div class="feature-item">
-                            <div class="feature-icon">⚡</div>
-                            <span>Low Power Consumption</span>
+                        <div class="spec-item">
+                            <span>Protection Rating</span>
+                            <span>IP67</span>
                         </div>
-                        <div class="feature-item">
-                            <div class="feature-icon">🚨</div>
-                            <span>Early Disease Detection</span>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-icon">🔧</div>
-                            <span>Easy Installation</span>
+                    </div>
+
+                    <div class="key-advantages">
+                        <h3>Key Advantages</h3>
+                        <div class="advantages-grid">
+                            <div class="advantage-card">
+                                <strong>🔒 Secure Attachment</strong>
+                                <small>Behind-neck placement prevents loss and ensures consistent contact</small>
+                            </div>
+                            <div class="advantage-card">
+                                <strong>🏥 Medical Grade</strong>
+                                <small>Hypoallergenic materials with veterinary certification</small>
+                            </div>
+                            <div class="advantage-card">
+                                <strong>⚡ Extended Battery</strong>
+                                <small>6+ months continuous operation with intelligent power management</small>
+                            </div>
+                            <div class="advantage-card">
+                                <strong>📊 Real-time Analytics</strong>
+                                <small>Instant health alerts with predictive AI capabilities</small>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+
+        <!-- Section 2: Attachment Demo -->
+        <div class="demo-section" data-section="1">
+            <div class="attachment-demo">
+                <div class="demo-title-section">
+                    <h2 class="section-title">Behind-Neck Attachment</h2>
+                    <p style="font-size: 1.2em; color: rgba(255,255,255,0.8); max-width: 600px; margin: 0 auto;">
+                        Strategic placement behind the neck eliminates common problems with ear tags while ensuring continuous monitoring.
+                    </p>
+                </div>
+
+                <div class="attachment-scene">
+                    <div class="pig-body">
+                        <div class="pig-head">
+                            <div class="pig-snout"></div>
+                        </div>
+                    </div>
+                    <div class="attachment-point" onclick="demonstrateAttachment()"></div>
+                    <div class="data-stream"></div>
+                    <div class="data-stream" style="left: 45%; animation-delay: 0.5s;"></div>
+                    <div class="data-stream" style="left: 55%; animation-delay: 1s;"></div>
+                </div>
+
+                <div class="attachment-steps">
+                    <div class="step-card">
+                        <div class="step-number">1</div>
+                        <h4 style="color: #FF6B35; margin-bottom: 10px;">Clean Area</h4>
+                        <p style="font-size: 0.9em; color: rgba(255,255,255,0.8);">
+                            Clean behind-neck area with antiseptic wipe
+                        </p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-number">2</div>
+                        <h4 style="color: #FF6B35; margin-bottom: 10px;">Apply Patch</h4>
+                        <p style="font-size: 0.9em; color: rgba(255,255,255,0.8);">
+                            Remove adhesive backing and press firmly
+                        </p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-number">3</div>
+                        <h4 style="color: #FF6B35; margin-bottom: 10px;">Activate</h4>
+                        <p style="font-size: 0.9em; color: rgba(255,255,255,0.8);">
+                            Press button for 3 seconds to start monitoring
+                        </p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-number">4</div>
+                        <h4 style="color: #FF6B35; margin-bottom: 10px;">Monitor</h4>
+                        <p style="font-size: 0.9em; color: rgba(255,255,255,0.8);">
+                            Automatic data transmission begins
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3: Sensor Technology -->
+        <div class="demo-section" data-section="2">
+            <div class="sensor-tech">
+                <div class="sensor-visual">
+                    <div class="tech-patch">
+                        <div class="sensor-detail optical-sensor"></div>
+                        <div class="sensor-detail temp-sensor"></div>
+                    </div>
+                </div>
+
+                <div class="tech-details">
+                    <div class="demo-title-section">
+                        <h2 class="section-title">Sensor Technology</h2>
+                        <p style="font-size: 1.1em; color: rgba(255,255,255,0.8);">
+                            Advanced multi-sensor array for comprehensive health monitoring
+                        </p>
+                    </div>
+
+                    <div class="tech-feature">
+                        <div class="feature-icon">🌡️</div>
+                        <h4 style="color: #FF6600; margin-bottom: 10px;">Temperature Monitoring</h4>
+                        <p style="color: rgba(255,255,255,0.8);">
+                            Medical-grade temperature sensor with ±0.1°C accuracy. 
+                            Direct skin contact through thermal conducting pad enables 
+                            real-time fever detection.
+                        </p>
+                    </div>
+
+                    <div class="tech-feature">
+                        <div class="feature-icon">❤️</div>
+                        <h4 style="color: #FF6600; margin-bottom: 10px;">Heart Rate Detection</h4>
+                        <p style="color: rgba(255,255,255,0.8);">
+                            Optical sensor array with green LED and photodiode technology. 
+                            Monitors heart rate variability to detect stress and illness 
+                            before visible symptoms appear.
+                        </p>
+                    </div>
+
+                    <div class="tech-feature">
+                        <div class="feature-icon">📡</div>
+                        <h4 style="color: #FF6600; margin-bottom: 10px;">Wireless Transmission</h4>
+                        <p style="color: rgba(255,255,255,0.8);">
+                            LoRa and WiFi connectivity for reliable data transmission. 
+                            Low-power design with intelligent transmission scheduling 
+                            maximizes battery life.
+                        </p>
+                    </div>
+
+                    <div class="tech-feature">
+                        <div class="feature-icon">🛡️</div>
+                        <h4 style="color: #FF6600; margin-bottom: 10px;">Durability Features</h4>
+                        <p style="color: rgba(255,255,255,0.8);">
+                            IP67 waterproof rating with chemical-resistant coating. 
+                            Ultrasonic welded housing and gasket-sealed button 
+                            ensure reliable operation in harsh farm environments.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 4: Packaging -->
+        <div class="demo-section" data-section="3">
+            <div class="packaging-demo">
+                <div style="text-align: center;">
+                    <h2 class="section-title">Smart Packaging System</h2>
+                    <p style="font-size: 1.25rem; color: rgba(255,255,255,0.75); margin-bottom: 80px; max-width: 900px; line-height: 1.6;">
+                        Professional packaging designed for veterinary clinics and large-scale farm operations with sustainability at its core
+                    </p>
+                </div>
+
+                <div class="packaging-showcase">
+                    <div class="packaging-option">
+                        <div class="package-individual" onclick="animatePackage(this)">
+                            <div class="clamshell">
+                                <div class="package-barcode"></div>
+                                <div class="package-patch"></div>
+                                <div class="package-label">HEALTHY HERD</div>
+                                <div class="activation-tab">PULL</div>
+                            </div>
+                        </div>
+                        <h4 class="packaging-title">Individual Units</h4>
+                        <div class="packaging-features">
+                            <div>Clear visibility of product</div>
+                            <div>Tamper-evident sealing</div>
+                            <div>Quick activation pull-tab</div>
+                            <div>Comprehensive instruction card</div>
+                            <div>Medical-grade sterile packaging</div>
+                        </div>
+                    </div>
+
+                    <div class="packaging-option">
+                        <div class="bulk-package" onclick="animateBulkPackage(this)">
+                            <div class="bulk-handle"></div>
+                            <div class="bulk-lid">HEALTHY HERD - 50 UNITS</div>
+                            <div class="foam-insert">
+                                <div class="mini-patch"></div>
+                                <div class="mini-patch"></div>
+                                <div class="mini-patch"></div>
+                                <div class="mini-patch"></div>
+                                <div class="mini-patch"></div>
+                                <div class="mini-patch"></div>
+                                <div class="mini-patch"></div>
+                                <div class="mini-patch"></div>
+                                <div class="mini-patch"></div>
+                                <div class="mini-patch"></div>
+                            </div>
+                        </div>
+                        <h4 class="packaging-title">Bulk Cases (50 units)</h4>
+                        <div class="packaging-features">
+                            <div>Protective foam organization</div>
+                            <div>Individual protective sleeves</div>
+                            <div>Durable carrying handle</div>
+                            <div>Quick-reference deployment guide</div>
+                            <div>Temperature monitoring strips</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="package-info">
+                    <div class="info-card">
+                        <div class="info-icon">🏭</div>
+                        <h4>Manufacturing Excellence</h4>
+                        <p>
+                            ISO 13485 certified clean room assembly with medical-grade materials. 
+                            Every unit undergoes rigorous testing including battery verification, 
+                            sensor calibration, and connectivity validation before packaging.
+                        </p>
+                    </div>
+                    
+                    <div class="info-card">
+                        <div class="info-icon">📦</div>
+                        <h4>Smart Distribution</h4>
+                        <p>
+                            Temperature-controlled shipping maintains adhesive quality and battery life. 
+                            Blockchain tracking provides complete supply chain visibility from 
+                            factory to farm deployment with real-time status updates.
+                        </p>
+                    </div>
+                    
+                    <div class="info-card">
+                        <div class="info-icon">♻️</div>
+                        <h4>Circular Sustainability</h4>
+                        <p>
+                            100% recyclable packaging materials with prepaid return program. 
+                            Used devices are refurbished for training purposes or 
+                            responsibly recycled for rare earth material recovery.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Dots -->
+        <div class="nav-dots">
+            <div class="nav-dot active" onclick="showSection(0)"></div>
+            <div class="nav-dot" onclick="showSection(1)"></div>
+            <div class="nav-dot" onclick="showSection(2)"></div>
+            <div class="nav-dot" onclick="showSection(3)"></div>
         </div>
     </div>
 
     <script>
-        // Add some interactive elements
-        document.addEventListener('DOMContentLoaded', function() {
-            const patch = document.querySelector('.patch-3d');
-            const led = document.querySelector('.led-indicator');
+        let currentSection = 0;
+        const totalSections = 4;
+
+        function showSection(index) {
+            // Update buttons
+            const buttons = document.querySelectorAll('.demo-btn');
+            buttons.forEach((btn, i) => {
+                if (i === index) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            // Update sections
+            const sections = document.querySelectorAll('.demo-section');
+            sections.forEach((section, i) => {
+                section.classList.remove('active', 'prev');
+                if (i === index) {
+                    section.classList.add('active');
+                } else if (i < index) {
+                    section.classList.add('prev');
+                }
+            });
+
+            // Update nav dots
+            const dots = document.querySelectorAll('.nav-dot');
+            dots.forEach((dot, i) => {
+                if (i === index) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+
+            currentSection = index;
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log('Fullscreen not supported');
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        function rotatePatch(element) {
+            // Stop the floating animation temporarily
+            element.style.animation = 'none';
             
-            patch.addEventListener('mouseenter', function() {
-                this.style.transform = 'perspective(1000px) rotateX(-5deg) rotateY(20deg) translateY(-5px) scale(1.05)';
+            const currentTransform = element.style.transform || '';
+            if (currentTransform.includes('rotateY(180deg)') || currentTransform.includes('rotateY(-180deg)')) {
+                element.style.transform = 'perspective(1200px) rotateX(-20deg) rotateY(15deg) translateY(-5px)';
+            } else {
+                element.style.transform = 'perspective(1200px) rotateX(-20deg) rotateY(-180deg) translateY(-5px)';
+            }
+            
+            // Restart floating animation after rotation
+            setTimeout(() => {
+                element.style.animation = 'heroFloat 4s ease-in-out infinite';
+                element.style.transform = '';
+            }, 2000);
+        }
+
+        function animateBulkPackage(element) {
+            element.style.animation = 'none';
+            element.style.transform = 'translateY(-20px) rotateX(-10deg) scale(1.05)';
+            
+            const patches = element.querySelectorAll('.mini-patch');
+            patches.forEach((patch, index) => {
+                setTimeout(() => {
+                    patch.style.background = '#00F5A0';
+                    setTimeout(() => {
+                        patch.style.background = 'linear-gradient(145deg, #FF6B35, #E55A2B)';
+                    }, 200);
+                }, index * 100);
             });
             
-            patch.addEventListener('mouseleave', function() {
-                this.style.transform = 'perspective(1000px) rotateX(-15deg) rotateY(10deg) translateY(0px) scale(1)';
-            });
-            
-            // Simulate different LED states
-            const ledStates = ['#00ff00', '#0066ff', '#ff0000', '#ff9800'];
-            let currentState = 0;
-            
-            setInterval(function() {
-                currentState = (currentState + 1) % ledStates.length;
-                led.style.background = ledStates[currentState];
-                led.style.boxShadow = `0 0 8px ${ledStates[currentState]}`;
-            }, 3000);
+            setTimeout(() => {
+                element.style.animation = 'bulkFloat 5s ease-in-out infinite';
+                element.style.transform = '';
+            }, 2000);
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' && currentSection < totalSections - 1) {
+                showSection(currentSection + 1);
+            } else if (e.key === 'ArrowLeft' && currentSection > 0) {
+                showSection(currentSection - 1);
+            } else if (e.key === 'f' || e.key === 'F') {
+                toggleFullscreen();
+            }
         });
+
+        // Touch/swipe support for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const swipeDistance = touchEndX - touchStartX;
+            
+            if (Math.abs(swipeDistance) > swipeThreshold) {
+                if (swipeDistance > 0 && currentSection > 0) {
+                    // Swipe right - go to previous section
+                    showSection(currentSection - 1);
+                } else if (swipeDistance < 0 && currentSection < totalSections - 1) {
+                    // Swipe left - go to next section
+                    showSection(currentSection + 1);
+                }
+            }
+        }
+
+        // Auto-advance demo (optional - remove if not wanted)
+        let autoAdvanceInterval;
+        
+        function startAutoAdvance() {
+            autoAdvanceInterval = setInterval(() => {
+                const nextSection = (currentSection + 1) % totalSections;
+                showSection(nextSection);
+            }, 15000); // 15 seconds per section
+        }
+
+        function stopAutoAdvance() {
+            clearInterval(autoAdvanceInterval);
+        }
+
+        // Uncomment to enable auto-advance
+        // startAutoAdvance();
+
+        // Stop auto-advance on user interaction
+        document.addEventListener('click', stopAutoAdvance);
+        document.addEventListener('keydown', stopAutoAdvance);
+        document.addEventListener('touchstart', stopAutoAdvance);
+
+        // Initialize
+        showSection(0);
     </script>
 </body>
 </html>
