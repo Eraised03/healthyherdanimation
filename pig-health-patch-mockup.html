@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthy Herd - Pig Health Monitoring Patch</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #FF6600 0%, #FF8533 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+
+        .header p {
+            margin: 10px 0 0 0;
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            padding: 40px;
+        }
+
+        .product-view {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .patch-3d {
+            position: relative;
+            width: 240px;
+            height: 160px;
+            background: linear-gradient(145deg, #FF6600, #e55a00);
+            border-radius: 32px;
+            box-shadow: 
+                0 8px 16px rgba(229, 90, 0, 0.3),
+                inset 0 2px 4px rgba(255, 255, 255, 0.2);
+            transform: perspective(1000px) rotateX(-15deg) rotateY(10deg);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: perspective(1000px) rotateX(-15deg) rotateY(10deg) translateY(0px); }
+            50% { transform: perspective(1000px) rotateX(-15deg) rotateY(10deg) translateY(-10px); }
+        }
+
+        .sensor-window {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, #333333 0%, #111111 100%);
+            border-radius: 50%;
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.5);
+        }
+
+        .sensor-dot {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 8px;
+            background: #00ff88;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #00ff88;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 0.7; transform: translate(-50%, -50%) scale(1.2); }
+        }
+
+        .led-indicator {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 12px;
+            height: 12px;
+            background: #00ff00;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #00ff00;
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.3; }
+        }
+
+        .qr-code {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            width: 24px;
+            height: 24px;
+            background: #333;
+            border-radius: 2px;
+            opacity: 0.7;
+        }
+
+        .logo-emboss {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            font-size: 10px;
+            color: rgba(255,255,255,0.3);
+            font-weight: bold;
+        }
+
+        .side-clips {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 30px;
+            background: #666;
+            border-radius: 4px;
+        }
+
+        .side-clips.left { left: -4px; }
+        .side-clips.right { right: -4px; }
+
+        .specifications {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+        }
+
+        .spec-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .spec-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .spec-item:last-child {
+            border-bottom: none;
+        }
+
+        .spec-label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .spec-value {
+            color: #666;
+        }
+
+        .features {
+            margin-top: 30px;
+        }
+
+        .feature-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .feature-icon {
+            width: 20px;
+            height: 20px;
+            background: #FF6600;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .attachment-demo {
+            margin-top: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .pig-silhouette {
+            width: 200px;
+            height: 120px;
+            background: #8d6e63;
+            border-radius: 60px 40px 40px 60px;
+            position: relative;
+            margin: 20px auto;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .patch-on-pig {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            width: 30px;
+            height: 20px;
+            background: #FF6600;
+            border-radius: 4px;
+            transform: rotate(-10deg);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .status-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: white;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .status-led {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .status-led.green { background: #4caf50; }
+        .status-led.blue { background: #2196f3; }
+        .status-led.red { background: #f44336; }
+        .status-led.orange { background: #ff9800; }
+
+        h2 {
+            color: #333;
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            font-weight: 300;
+        }
+
+        h3 {
+            color: #FF6600;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+                gap: 30px;
+                padding: 20px;
+            }
+            
+            .patch-3d {
+                width: 200px;
+                height: 130px;
+            }
+            
+            .spec-grid, .feature-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Healthy Herd</h1>
+            <p>Advanced Pig Health Monitoring System</p>
+        </div>
+
+        <div class="content">
+            <div class="product-view">
+                <div class="patch-3d">
+                    <div class="sensor-window">
+                        <div class="sensor-dot"></div>
+                    </div>
+                    <div class="led-indicator"></div>
+                    <div class="qr-code"></div>
+                    <div class="logo-emboss">HH</div>
+                    <div class="side-clips left"></div>
+                    <div class="side-clips right"></div>
+                </div>
+
+                <div class="attachment-demo">
+                    <h3>Behind-Neck Placement</h3>
+                    <div class="pig-silhouette">
+                        <div class="patch-on-pig"></div>
+                    </div>
+                    <p>Optimal position for continuous monitoring without interference</p>
+                </div>
+
+                <div class="status-indicators">
+                    <div class="status-item">
+                        <div class="status-led green"></div>
+                        <span>Normal</span>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-led blue"></div>
+                        <span>Transmitting</span>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-led red"></div>
+                        <span>Alert</span>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-led orange"></div>
+                        <span>Pairing</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="specifications">
+                <h2>Technical Specifications</h2>
+                
+                <div class="spec-grid">
+                    <div class="spec-item">
+                        <span class="spec-label">Dimensions</span>
+                        <span class="spec-value">60×40×8mm</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Weight</span>
+                        <span class="spec-value">25-30g</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Material</span>
+                        <span class="spec-value">ABS + TPU</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Rating</span>
+                        <span class="spec-value">IP67</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Battery Life</span>
+                        <span class="spec-value">6+ months</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Connectivity</span>
+                        <span class="spec-value">LoRa/WiFi</span>
+                    </div>
+                </div>
+
+                <div class="features">
+                    <h3>Key Features</h3>
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <div class="feature-icon">🌡️</div>
+                            <span>Continuous Temperature Monitoring</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">❤️</div>
+                            <span>Heart Rate Detection</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">📡</div>
+                            <span>Real-time Data Transmission</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">🔒</div>
+                            <span>Secure Attachment System</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">💧</div>
+                            <span>Waterproof Design</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">⚡</div>
+                            <span>Low Power Consumption</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">🚨</div>
+                            <span>Early Disease Detection</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">🔧</div>
+                            <span>Easy Installation</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add some interactive elements
+        document.addEventListener('DOMContentLoaded', function() {
+            const patch = document.querySelector('.patch-3d');
+            const led = document.querySelector('.led-indicator');
+            
+            patch.addEventListener('mouseenter', function() {
+                this.style.transform = 'perspective(1000px) rotateX(-5deg) rotateY(20deg) translateY(-5px) scale(1.05)';
+            });
+            
+            patch.addEventListener('mouseleave', function() {
+                this.style.transform = 'perspective(1000px) rotateX(-15deg) rotateY(10deg) translateY(0px) scale(1)';
+            });
+            
+            // Simulate different LED states
+            const ledStates = ['#00ff00', '#0066ff', '#ff0000', '#ff9800'];
+            let currentState = 0;
+            
+            setInterval(function() {
+                currentState = (currentState + 1) % ledStates.length;
+                led.style.background = ledStates[currentState];
+                led.style.boxShadow = `0 0 8px ${ledStates[currentState]}`;
+            }, 3000);
+        });
+    </script>
+</body>
+</html>
